@@ -1,3 +1,5 @@
+[![DelivOps banner](https://raw.githubusercontent.com/delivops/.github/main/images/banner.png?raw=true)](https://delivops.com)
+
 # Release Notes Generator
 
 A GitHub Action that automatically generates and posts release notes to Slack by analyzing merged pull requests across multiple repositories using AI (OpenAI or Claude).
