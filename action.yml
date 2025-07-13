@@ -1,0 +1,84 @@
+name: 'Release Notes Generator'
+description: 'Generate and post release notes from GitHub PRs to Slack using AI'
+
+inputs:
+  repos:
+    description: 'Comma-separated list of repositories to analyze (e.g., "org1/repo1,org2/repo2")'
+    required: true
+  github_token:
+    description: 'GitHub Personal Access Token with repo access'
+    required: true
+  slack_bot_token:
+    description: 'Slack Bot Token'
+    required: true
+  slack_channel:
+    description: 'Slack channel to post to (e.g., #release-notes)'
+    required: true
+  ai_provider:
+    description: 'AI provider to use (openai or claude)'
+    required: false
+    default: 'openai'
+  openai_api_key:
+    description: 'OpenAI API key (required if ai_provider is openai)'
+    required: false
+  anthropic_api_key:
+    description: 'Anthropic API key (required if ai_provider is claude)'
+    required: false
+  days_back:
+    description: 'Number of days to look back for PRs'
+    required: false
+    default: '7'
+
+outputs:
+  message:
+    description: 'The generated release notes message'
+    value: ${{ steps.generate-notes.outputs.message }}
+  timestamp:
+    description: 'Timestamp of when the notes were generated'
+    value: ${{ steps.generate-notes.outputs.timestamp }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install PyGithub openai anthropic slack_sdk
+        
+    - name: Generate release notes
+      id: generate-notes
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+        SLACK_CHANNEL: ${{ inputs.slack_channel }}
+        AI_PROVIDER: ${{ inputs.ai_provider }}
+        OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
+      run: |
+        python scripts/generate_release_notes.py \
+          --repos "${{ inputs.repos }}" \
+          --days-back ${{ inputs.days_back }}
+        
+        # Read the generated message and timestamp
+        if [ -f "generated_message.txt" ]; then
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          cat generated_message.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-notes-artifacts
+        path: |
+          generated_message.txt
+        retention-days: 30 
