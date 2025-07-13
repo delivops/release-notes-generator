@@ -40,9 +40,12 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout code
+    - name: Checkout action code
       uses: actions/checkout@v4
-      
+      with:
+        repository: delivops/release-notes-generator
+        path: release-notes-generator-action
+        
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -51,7 +54,7 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        pip install PyGithub openai anthropic slack_sdk
+        pip install -r release-notes-generator-action/requirements.txt
         
     - name: Generate release notes
       id: generate-notes
@@ -64,7 +67,7 @@ runs:
         OPENAI_API_KEY: ${{ inputs.openai_api_key }}
         ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
       run: |
-        python scripts/generate_release_notes.py \
+        python release-notes-generator-action/scripts/generate_release_notes.py \
           --repos "${{ inputs.repos }}" \
           --days-back ${{ inputs.days_back }}
         
