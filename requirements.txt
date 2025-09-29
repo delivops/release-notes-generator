@@ -1,4 +1,4 @@
-PyGithub==2.7.0
+PyGithub==2.8.1
 openai==1.99.6
 anthropic==0.62.0
 slack_sdk==3.36.0
