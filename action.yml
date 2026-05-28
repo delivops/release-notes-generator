@@ -85,6 +85,11 @@ runs:
           {
             echo "message<<${delimiter}"
             cat generated_message.txt
+            # Ensure the closing delimiter starts on its own line even when
+            # the generated file has no trailing newline; otherwise it gets
+            # glued onto the last content line and GitHub reports
+            # "Matching delimiter not found".
+            [ -n "$(tail -c1 generated_message.txt)" ] && echo ""
             echo "${delimiter}"
           } >> "$GITHUB_OUTPUT"
         fi
