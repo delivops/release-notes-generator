@@ -493,9 +493,11 @@ Create user-facing release notes following the format and guidelines above."""
             # Post to Slack
             self.post_to_slack(full_message, date_range)
             
-            # Save message to file for action output
+            # Save message to file for action output. Write a trailing
+            # newline so the action's $GITHUB_OUTPUT heredoc delimiter always
+            # lands on its own line.
             with open("generated_message.txt", "w") as f:
-                f.write(full_message)
+                f.write(full_message + "\n")
             
             logger.info("Release notes generation completed successfully")
         else:
