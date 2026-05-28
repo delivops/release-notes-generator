@@ -24,6 +24,10 @@ inputs:
   anthropic_api_key:
     description: 'Anthropic API key (required if ai_provider is claude)'
     required: false
+  ai_model:
+    description: 'Optional model name to override the provider default (e.g. claude-haiku-4-5-20251001, gpt-4o-mini)'
+    required: false
+    default: ''
   days_back:
     description: 'Number of days to look back for PRs'
     required: false
@@ -66,16 +70,23 @@ runs:
         AI_PROVIDER: ${{ inputs.ai_provider }}
         OPENAI_API_KEY: ${{ inputs.openai_api_key }}
         ANTHROPIC_API_KEY: ${{ inputs.anthropic_api_key }}
+        AI_MODEL: ${{ inputs.ai_model }}
       run: |
         python release-notes-generator-action/scripts/generate_release_notes.py \
           --repos "${{ inputs.repos }}" \
           --days-back ${{ inputs.days_back }}
         
-        # Read the generated message and timestamp
+        # Read the generated message and write it to the step output.
+        # Use a unique random delimiter so the generated content can never
+        # collide with the heredoc terminator (the static "EOF" delimiter
+        # broke when the AI output contained a line equal to "EOF").
         if [ -f "generated_message.txt" ]; then
-          echo "message<<EOF" >> $GITHUB_OUTPUT
-          cat generated_message.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          delimiter="ghadelimiter_$(openssl rand -hex 16)"
+          {
+            echo "message<<${delimiter}"
+            cat generated_message.txt
+            echo "${delimiter}"
+          } >> "$GITHUB_OUTPUT"
         fi
         
     - name: Upload artifacts
