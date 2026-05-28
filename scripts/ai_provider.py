@@ -100,7 +100,7 @@ class OpenAIProvider(AIProvider):
 class ClaudeProvider(AIProvider):
     """Claude API provider implementation."""
     
-    def __init__(self, api_key: str, model: str = "claude-3-haiku-20240307"):
+    def __init__(self, api_key: str, model: str = "claude-haiku-4-5-20251001"):
         """
         Initialize Claude provider.
         
@@ -178,7 +178,7 @@ def create_ai_provider(provider: str, api_key: str, model: Optional[str] = None)
         model = model or "gpt-4o-mini"
         return OpenAIProvider(api_key, model)
     elif provider.lower() == 'claude':
-        model = model or "claude-3-haiku-20240307"
+        model = model or "claude-haiku-4-5-20251001"
         return ClaudeProvider(api_key, model)
     else:
         raise ValueError(f"Unsupported AI provider: {provider}. Supported providers: openai, claude") 

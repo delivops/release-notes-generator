@@ -513,6 +513,7 @@ def main():
     slack_bot_token = os.getenv("SLACK_BOT_TOKEN")
     slack_channel = os.getenv("SLACK_CHANNEL")
     ai_provider = os.getenv("AI_PROVIDER", "openai").lower()
+    ai_model = os.getenv("AI_MODEL") or None
     openai_api_key = os.getenv("OPENAI_API_KEY")
     anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
     github_token = os.getenv("GITHUB_TOKEN")
@@ -560,7 +561,8 @@ def main():
             slack_channel=slack_channel,
             ai_provider=ai_provider,
             ai_api_key=ai_api_key,
-            github_token=github_token
+            github_token=github_token,
+            ai_model=ai_model
         )
         
         # Generate release notes

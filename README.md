@@ -97,9 +97,12 @@ Add these secrets to your repository:
 | `ai_provider` | No | AI provider to use (openai or claude) | openai |
 | `openai_api_key` | Yes* | OpenAI API key (required if ai_provider is openai) | - |
 | `anthropic_api_key` | Yes* | Anthropic API key (required if ai_provider is claude) | - |
+| `ai_model` | No | Model name to override the provider default (e.g. `claude-haiku-4-5-20251001`, `gpt-4o-mini`) | provider default |
 | `days_back` | No | Number of days to look back for PRs | 7 |
 
 *Either `openai_api_key` OR `anthropic_api_key` is required, depending on the chosen provider.
+
+When `ai_model` is omitted, each provider falls back to its default: `gpt-4o-mini` for OpenAI and `claude-haiku-4-5-20251001` for Claude.
 
 ## Action Outputs
 
