@@ -45,7 +45,7 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout action code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
       with:
         repository: delivops/release-notes-generator
         path: release-notes-generator-action
